@@ -1,0 +1,11 @@
+{
+  "title": "Smartebooks.AfiToolsAI",
+  "description": "Empowering African entrepreneurs and freelancers, this AI toolkit generates professional content for social media, product listings, and marketing messages.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

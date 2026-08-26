@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+@import 'tailwindcss';
+
+/* ─── Light Mode ─── */
+:root {
+  --bg: #F8F9FC;
+  --bg-secondary: #F1F5F9;
+  --surface: #FFFFFF;
+  --surface-secondary: #F8F9FC;
+  --border: #E2E8F0;
+  --border-subtle: #F1F5F9;
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --primary-subtle: #EEF2FF;
+  --primary-text: #4F46E5;
+  --accent: #7C3AED;
+  --accent-subtle: #F5F3FF;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-hover: 0 8px 30px rgba(79, 70, 229, 0.12);
+  --gradient-primary: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  --radius: 12px;
+}
+
+/* ─── Dark Mode — couleurs vives et néon ─── */
+[data-theme="dark"] {
+  --bg: #0A0A14;
+  --bg-secondary: #111122;
+  --surface: #13132A;
+  --surface-secondary: #1A1A35;
+  --border: #2A2A4A;
+  --border-subtle: #1E1E3A;
+  --text-primary: #F0EEFF;
+  --text-secondary: #9B8FD4;
+  --text-muted: #6B5FA8;
+  --primary: #7C6FFF;
+  --primary-hover: #9F95FF;
+  --primary-subtle: #1A1840;
+  --primary-text: #9F95FF;
+  --accent: #E040FB;
+  --accent-subtle: #2A1040;
+  --shadow-card: 0 0 0 1px rgba(124, 111, 255, 0.08), 0 4px 20px rgba(0,0,0,0.4);
+  --shadow-hover: 0 0 30px rgba(124, 111, 255, 0.25), 0 0 60px rgba(224, 64, 251, 0.1);
+  --gradient-primary: linear-gradient(135deg, #7C6FFF 0%, #E040FB 100%);
+}
+
+@theme inline {
+  --font-sans: 'Nunito', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ─── Gradient utilities ─── */
+.gradient-primary { background: var(--gradient-primary); }
+
+.gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Card hover ─── */
+.card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* ─── Dark mode glow effects ─── */
+[data-theme="dark"] .card-hover:hover {
+  border-color: var(--primary) !important;
+}
+
+[data-theme="dark"] .gradient-primary {
+  box-shadow: 0 0 20px rgba(124, 111, 255, 0.4);
+}
+
+/* ─── Animations ─── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(124, 111, 255, 0.4); }
+  50%       { box-shadow: 0 0 25px rgba(224, 64, 251, 0.6); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+
+.animate-fade-in { animation: fadeIn 0.4s ease forwards; }
+.animate-float   { animation: float 3s ease-in-out infinite; }
+
+[data-theme="dark"] .animate-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.shimmer {
+  background: linear-gradient(90deg, var(--border-subtle) 25%, var(--border) 50%, var(--border-subtle) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ─── Form inputs ─── */
+textarea:focus, input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+input, textarea, select {
+  background-color: var(--surface) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* ─── Sidebar ─── */
+.sidebar-link { transition: all 0.15s ease; }
+.sidebar-link:hover {
+  background-color: var(--primary-subtle);
+  color: var(--primary-text);
+}
+.sidebar-link.active {
+  background-color: var(--primary-subtle);
+  color: var(--primary-text);
+  font-weight: 600;
+}
+
+/* ─── Dark mode theme toggle button ─── */
+.theme-toggle {
+  width: 36px;
+  height: 20px;
+  background: var(--border);
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  border: none;
+  outline: none;
+  flex-shrink: 0;
+}
+.theme-toggle.dark {
+  background: var(--gradient-primary);
+}
+.theme-toggle::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.3s ease;
+}
+.theme-toggle.dark::after {
+  transform: translateX(16px);
+}
