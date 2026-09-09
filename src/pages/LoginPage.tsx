@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { MoonIcon, SunIcon } from "../components/icons";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -34,7 +35,7 @@ export default function LoginPage() {
           <span className="font-display font-bold" style={{ color: "var(--text-primary)" }}>AfriTools <span className="gradient-text">AI</span></span>
         </Link>
         <div className="flex items-center gap-2">
-          <span className="text-sm">{isDark ? "🌙" : "☀️"}</span>
+          <span className="text-sm">{isDark ? <MoonIcon size={15} style={{ color: "var(--text-muted)" }} /> : <SunIcon size={15} style={{ color: "var(--text-muted)" }} />}</span>
           <button onClick={toggleTheme} className={`theme-toggle ${isDark ? "dark" : ""}`} />
         </div>
       </div>
@@ -42,7 +43,7 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="font-display font-bold text-3xl mb-2" style={{ color: "var(--text-primary)" }}>Bon retour ! 👋</h1>
+            <h1 className="font-display font-bold text-3xl mb-2" style={{ color: "var(--text-primary)" }}>Bon retour !</h1>
             <p style={{ color: "var(--text-secondary)" }}>Connectez-vous pour accéder à vos outils IA</p>
           </div>
 

@@ -1,16 +1,25 @@
-import { useState } from "react";
-import { Outlet, Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import Sidebar from "../components/Sidebar";
+import { useState } from "react"
+
+import { Outlet, Navigate } from "react-router-dom"
+
+import { useAuth } from "../context/AuthContext"
+
+import Sidebar from "../components/Sidebar"
 
 export default function DashboardLayout() {
-  const { isAuthenticated } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { isAuthenticated, loading } = useAuth()
 
-  if (!isAuthenticated) return <Navigate to="/connexion" replace />;
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  if (loading) return null
+
+  if (!isAuthenticated) return <Navigate to="/connexion" replace />
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: "var(--bg)" }}>
+    <div
+      className="flex h-screen overflow-hidden"
+      style={{ backgroundColor: "var(--bg)" }}
+    >
       {/* Desktop sidebar */}
       <div className="hidden md:flex flex-shrink-0">
         <Sidebar />
@@ -19,7 +28,10 @@ export default function DashboardLayout() {
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setSidebarOpen(false)}
+          />
           <div className="relative z-10 flex flex-col w-64 shadow-2xl">
             <Sidebar onClose={() => setSidebarOpen(false)} />
           </div>
@@ -29,14 +41,35 @@ export default function DashboardLayout() {
       {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Mobile header */}
-        <div className="md:hidden flex items-center justify-between px-4 py-3" style={{ backgroundColor: "var(--surface)", borderBottom: "1px solid var(--border)" }}>
-          <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-lg transition-colors" style={{ color: "var(--text-secondary)" }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="4" y1="8" x2="20" y2="8"/>
-              <line x1="4" y1="16" x2="20" y2="16"/>
+        <div
+          className="md:hidden flex items-center justify-between px-4 py-3"
+          style={{
+            backgroundColor: "var(--surface)",
+            borderBottom: "1px solid var(--border)",
+          }}
+        >
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 rounded-lg transition-colors"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <line x1="4" y1="8" x2="20" y2="8" />
+              <line x1="4" y1="16" x2="20" y2="16" />
             </svg>
           </button>
-          <span className="font-display font-bold" style={{ color: "var(--text-primary)" }}>
+          <span
+            className="font-display font-bold"
+            style={{ color: "var(--text-primary)" }}
+          >
             AfriTools <span className="gradient-text">AI</span>
           </span>
           <div className="w-8" />
@@ -46,5 +79,5 @@ export default function DashboardLayout() {
         </main>
       </div>
     </div>
-  );
+  )
 }

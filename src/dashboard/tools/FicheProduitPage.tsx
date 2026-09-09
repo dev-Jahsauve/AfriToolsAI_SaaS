@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useApp } from "../../context/AppContext";
+import { useCredits } from "../../context/CreditsContext";
+import { runGeneration } from "../../lib/generate";
+import { creditErrorMessage } from "../../lib/credits";
 import { generateFicheProduit } from "../../context/aiEngine";
 import GenerationOutput from "../../components/GenerationOutput";
+import { SparklesIcon } from "../../components/icons";
 import ToolLayout from "./ToolLayout";
 
 export default function FicheProduitPage() {
-  const { user, useGeneration } = useAuth();
+  const { user } = useAuth();
   const { addGeneration } = useApp();
+  const { refresh } = useCredits();
   const [form, setForm] = useState({ nom: "", caracteristiques: "", prix: "", cible: "" });
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,31 +27,29 @@ export default function FicheProduitPage() {
       setError("Veuillez remplir tous les champs.");
       return;
     }
-    const ok = useGeneration();
-    if (!ok) {
-      setError("Vous avez atteint votre limite de générations.");
+    setLoading(true);
+    const res = await runGeneration("fiche-produit", form, () => generateFicheProduit(form));
+    setLoading(false);
+    if (!res.ok) {
+      setError(creditErrorMessage({ ok: false, error: res.error, required: res.required, balance: res.balance }));
       return;
     }
-    setLoading(true);
-    const result = await generateFicheProduit(form);
-    setLoading(false);
-    setOutput(result);
+    setOutput(res.output);
     if (user) {
       addGeneration({
         userId: user.id,
         tool: "fiche-produit",
         toolLabel: "Fiche produit",
         input: form,
-        output: result,
+        output: res.output,
       });
     }
+    refresh();
   };
 
   return (
     <ToolLayout
-      icon="📦"
-      title="Générateur de fiche produit"
-      description="Créez une fiche produit professionnelle et persuasive en quelques secondes."
+      toolId="fiche-produit"
     >
       <div className="space-y-6">
         <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6">
@@ -120,7 +123,7 @@ export default function FicheProduitPage() {
                   Génération en cours...
                 </>
               ) : (
-                "✨ Générer la fiche produit"
+                <><SparklesIcon size={14} /> Générer la fiche produit</>
               )}
             </button>
           </form>

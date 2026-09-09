@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { MenuIcon, MoonIcon, SunIcon, XIcon } from "./icons";
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
@@ -41,7 +42,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {/* Theme toggle discret */}
             <div className="flex items-center gap-2">
-              <span className="text-sm">{isDark ? "🌙" : "☀️"}</span>
+              <span className="text-sm">{isDark ? <MoonIcon size={15} style={{ color: "var(--text-muted)" }} /> : <SunIcon size={15} style={{ color: "var(--text-muted)" }} />}</span>
               <button
                 onClick={toggleTheme}
                 className={`theme-toggle ${isDark ? "dark" : ""}`}
@@ -82,9 +83,7 @@ export default function Navbar() {
               style={{ color: "var(--text-secondary)" }}
               onClick={() => setMenuOpen(!menuOpen)}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                {menuOpen ? (<><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>) : (<><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/></>)}
-              </svg>
+              {menuOpen ? <XIcon size={22} /> : <MenuIcon size={22} />}
             </button>
           </div>
         </div>

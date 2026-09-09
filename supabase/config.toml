@@ -1,0 +1,20 @@
+project_id = "afritools-ai"
+
+[functions]
+verify_jwt = true
+
+[functions.generate]
+enabled = true
+verify_jwt = false
+
+[functions.generation-status]
+enabled = true
+verify_jwt = false
+
+[functions.admin]
+enabled = true
+verify_jwt = false
+
+[functions.payment-webhook]
+enabled = true
+verify_jwt = false

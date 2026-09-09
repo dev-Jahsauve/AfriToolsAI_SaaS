@@ -1,16 +1,21 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useApp } from "../../context/AppContext";
+import { useCredits } from "../../context/CreditsContext";
+import { runGeneration } from "../../lib/generate";
+import { creditErrorMessage } from "../../lib/credits";
 import { generatePublicite } from "../../context/aiEngine";
 import GenerationOutput from "../../components/GenerationOutput";
 import ToolLayout from "./ToolLayout";
+import { SparklesIcon } from "../../components/icons";
 
 const plateformes = ["Facebook", "Instagram", "WhatsApp", "TikTok", "LinkedIn"];
 const objectifs = ["Vendre un produit", "Générer des leads", "Augmenter la notoriété", "Promouvoir une offre spéciale", "Fidéliser les clients"];
 
 export default function PublicitePage() {
-  const { user, useGeneration } = useAuth();
+  const { user } = useAuth();
   const { addGeneration } = useApp();
+  const { refresh } = useCredits();
   const [form, setForm] = useState({ produit: "", audience: "", prix: "", objectif: "", plateforme: "" });
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,17 +30,20 @@ export default function PublicitePage() {
       setError("Veuillez remplir les champs obligatoires.");
       return;
     }
-    const ok = useGeneration();
-    if (!ok) { setError("Limite de générations atteinte."); return; }
     setLoading(true);
-    const result = await generatePublicite(form);
+    const res = await runGeneration("publicite", form, () => generatePublicite(form));
     setLoading(false);
-    setOutput(result);
-    if (user) addGeneration({ userId: user.id, tool: "publicite", toolLabel: "Publicité", input: form, output: result });
+    if (!res.ok) {
+      setError(creditErrorMessage({ ok: false, error: res.error, required: res.required, balance: res.balance }));
+      return;
+    }
+    setOutput(res.output);
+    if (user) addGeneration({ userId: user.id, tool: "publicite", toolLabel: "Publicité", input: form, output: res.output });
+    refresh();
   };
 
   return (
-    <ToolLayout icon="📢" title="Générateur de publicité" description="Créez des textes publicitaires percutants pour toutes vos plateformes.">
+    <ToolLayout toolId="publicite">
       <div className="space-y-6">
         <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6">
           {error && <div className="mb-5 p-4 bg-[#FEF2F2] border border-[#FECACA] rounded-xl text-sm text-[#EF4444] font-semibold">{error}</div>}
@@ -75,7 +83,7 @@ export default function PublicitePage() {
             </div>
             <button type="submit" disabled={loading}
               className="w-full py-3.5 rounded-xl gradient-primary text-white font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2">
-              {loading ? (<><svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/><path d="M12 2a10 10 0 0110 10" stroke="white" strokeWidth="3" strokeLinecap="round"/></svg>Génération en cours...</>) : "✨ Générer les publicités"}
+              {loading ? (<><svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/><path d="M12 2a10 10 0 0110 10" stroke="white" strokeWidth="3" strokeLinecap="round"/></svg>Génération en cours...</>) : (<><SparklesIcon size={14} /> Générer les publicités</>)}
             </button>
           </form>
         </div>

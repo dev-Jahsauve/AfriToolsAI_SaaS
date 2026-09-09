@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { FacebookIcon, HeartIcon, KeyIcon, MessageCircleIcon, RocketIcon } from "./icons";
 
 const WHATSAPP_NUMBER = "237698308780";
 const FACEBOOK_URL = "https://www.facebook.com/share/18xePHwZTX/";
@@ -92,22 +93,22 @@ export default function Footer() {
             <ul className="space-y-2.5">
               <li>
                 <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="text-sm text-white/40 hover:text-white transition-colors flex items-center gap-2">
-                  <span>💬</span> WhatsApp
+                  <MessageCircleIcon size={13} className="text-white/40" /> WhatsApp
                 </a>
               </li>
               <li>
                 <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="text-sm text-white/40 hover:text-white transition-colors flex items-center gap-2">
-                  <span>📘</span> Facebook
+                  <FacebookIcon size={13} className="text-white/40" /> Facebook
                 </a>
               </li>
               <li>
                 <Link to="/inscription" className="text-sm text-white/40 hover:text-white transition-colors flex items-center gap-2">
-                  <span>🚀</span> S'inscrire gratuitement
+                  <RocketIcon size={13} className="text-white/40" /> S'inscrire gratuitement
                 </Link>
               </li>
               <li>
                 <Link to="/connexion" className="text-sm text-white/40 hover:text-white transition-colors flex items-center gap-2">
-                  <span>🔑</span> Se connecter
+                  <KeyIcon size={13} className="text-white/40" /> Se connecter
                 </Link>
               </li>
             </ul>
@@ -116,7 +117,7 @@ export default function Footer() {
 
         <div className="border-t mt-12 pt-6 flex flex-col md:flex-row items-center justify-between gap-4" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
           <p className="text-xs text-white/25">© 2025 AfriTools AI. Tous droits réservés.</p>
-          <p className="text-xs text-white/25">Fait avec ❤️ pour les entrepreneurs africains</p>
+          <p className="text-xs text-white/25 flex items-center gap-1.5">Fait avec <HeartIcon size={12} className="text-white/40" /> pour les entrepreneurs africains</p>
         </div>
       </div>
     </footer>

@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useApp } from "../../context/AppContext";
+import { useCredits } from "../../context/CreditsContext";
+import { runGeneration } from "../../lib/generate";
+import { creditErrorMessage } from "../../lib/credits";
 import { generateOffreCommerciale } from "../../context/aiEngine";
 import GenerationOutput from "../../components/GenerationOutput";
 import ToolLayout from "./ToolLayout";
+import { SparklesIcon } from "../../components/icons";
 
 const durees = ["24 heures", "48 heures", "3 jours", "1 semaine", "2 semaines", "1 mois"];
 
 export default function OffreCommercialePage() {
-  const { user, useGeneration } = useAuth();
+  const { user } = useAuth();
   const { addGeneration } = useApp();
+  const { refresh } = useCredits();
   const [form, setForm] = useState({ produit: "", ancienPrix: "", nouveauPrix: "", duree: "", avantages: "" });
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,17 +38,20 @@ export default function OffreCommercialePage() {
       setError("Le nouveau prix doit être inférieur à l'ancien prix.");
       return;
     }
-    const ok = useGeneration();
-    if (!ok) { setError("Limite de générations atteinte."); return; }
     setLoading(true);
-    const result = await generateOffreCommerciale(form);
+    const res = await runGeneration("offre-commerciale", form, () => generateOffreCommerciale(form));
     setLoading(false);
-    setOutput(result);
-    if (user) addGeneration({ userId: user.id, tool: "offre-commerciale", toolLabel: "Offre commerciale", input: form, output: result });
+    if (!res.ok) {
+      setError(creditErrorMessage({ ok: false, error: res.error, required: res.required, balance: res.balance }));
+      return;
+    }
+    setOutput(res.output);
+    if (user) addGeneration({ userId: user.id, tool: "offre-commerciale", toolLabel: "Offre commerciale", input: form, output: res.output });
+    refresh();
   };
 
   return (
-    <ToolLayout icon="🎯" title="Générateur d'offre commerciale" description="Transformez n'importe quelle réduction en offre irrésistible avec plusieurs variantes.">
+    <ToolLayout toolId="offre-commerciale">
       <div className="space-y-6">
         <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6">
           {error && <div className="mb-5 p-4 bg-[#FEF2F2] border border-[#FECACA] rounded-xl text-sm text-[#EF4444] font-semibold">{error}</div>}
@@ -70,7 +78,7 @@ export default function OffreCommercialePage() {
 
             {reduction > 0 && (
               <div className="flex items-center gap-3 p-4 bg-[#DCFCE7] rounded-xl animate-fade-in">
-                <span className="text-2xl">🎉</span>
+                <SparklesIcon size={22} style={{ color: "#16A34A" }} />
                 <div>
                   <div className="font-bold text-[#16A34A] text-sm">Réduction de {reduction}% !</div>
                   <div className="text-xs text-[#166534]">Économie de {parseInt(form.ancienPrix) - parseInt(form.nouveauPrix)} FCFA</div>
@@ -99,7 +107,7 @@ export default function OffreCommercialePage() {
 
             <button type="submit" disabled={loading}
               className="w-full py-3.5 rounded-xl gradient-primary text-white font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2">
-              {loading ? (<><svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/><path d="M12 2a10 10 0 0110 10" stroke="white" strokeWidth="3" strokeLinecap="round"/></svg>Génération en cours...</>) : "✨ Générer l'offre commerciale"}
+              {loading ? (<><svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/><path d="M12 2a10 10 0 0110 10" stroke="white" strokeWidth="3" strokeLinecap="round"/></svg>Génération en cours...</>) : (<><SparklesIcon size={14} /> Générer l'offre commerciale</>)}
             </button>
           </form>
         </div>

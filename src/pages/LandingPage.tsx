@@ -2,6 +2,18 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { TOOLS } from "../config/tools";
+import {
+  AlertCircleIcon,
+  ClockIcon,
+  FlameIcon,
+  PenLineIcon,
+  RocketIcon,
+  SparklesIcon,
+  TargetIcon,
+  TrendDownIcon,
+  ZapIcon,
+} from "../components/icons";
 
 // Images Unsplash
 const IMG_HERO_WOMAN = "https://images.unsplash.com/photo-1687422808311-a776f467a468?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800&q=80";
@@ -10,13 +22,20 @@ const IMG_ENTREPRENEUR_MAN = "https://images.unsplash.com/photo-1676119451563-0c
 const IMG_LAPTOP_WOMAN = "https://images.unsplash.com/photo-1675250719891-37d4747c9e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80";
 const IMG_COFFEE_WOMAN = "https://images.unsplash.com/photo-1748002369513-af0f999d9f1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600&q=80";
 
-const tools = [
-  { icon: "📦", title: "Fiche produit", desc: "Fiches persuasives qui donnent envie d'acheter instantanément.", path: "/dashboard/fiche-produit", color: "from-blue-500 to-indigo-600" },
-  { icon: "📢", title: "Publicité", desc: "Textes publicitaires percutants pour Facebook, Instagram et WhatsApp.", path: "/dashboard/publicite", color: "from-purple-500 to-violet-600" },
-  { icon: "📱", title: "Publication sociale", desc: "Posts optimisés avec accroche, contenu engageant et appel à l'action.", path: "/dashboard/publication-sociale", color: "from-pink-500 to-rose-600" },
-  { icon: "💬", title: "Messages WhatsApp", desc: "Messages naturels pour relancer, fidéliser ou convertir vos prospects.", path: "/dashboard/messages-whatsapp", color: "from-green-500 to-emerald-600" },
-  { icon: "🎯", title: "Offre commerciale", desc: "Transformez vos réductions en offres irrésistibles avec plusieurs variantes.", path: "/dashboard/offre-commerciale", color: "from-orange-500 to-amber-600" },
-];
+const toolDescs: Record<string, string> = {
+  "fiche-produit": "Fiches persuasives qui donnent envie d'acheter instantanément.",
+  publicite: "Textes publicitaires percutants pour Facebook, Instagram et WhatsApp.",
+  "publication-sociale": "Posts optimisés avec accroche, contenu engageant et appel à l'action.",
+  "messages-whatsapp": "Messages naturels pour relancer, fidéliser ou convertir vos prospects.",
+  "offre-commerciale": "Transformez vos réductions en offres irrésistibles avec plusieurs variantes.",
+};
+const tools = TOOLS.map((t) => ({
+  Icon: t.Icon,
+  title: t.label,
+  desc: toolDescs[t.id] ?? t.description,
+  path: t.path,
+  color: t.gradient,
+}));
 
 const results = [
   {
@@ -62,10 +81,10 @@ const results = [
 ];
 
 const steps = [
-  { num: "1", title: "Choisissez un outil", desc: "Sélectionnez parmi nos 5 outils IA selon votre besoin du moment.", icon: "🎯" },
-  { num: "2", title: "Remplissez le formulaire", desc: "Décrivez votre produit, votre audience et votre objectif en quelques secondes.", icon: "✍️" },
-  { num: "3", title: "Obtenez votre contenu", desc: "L'IA génère un contenu professionnel et persuasif adapté au marché africain.", icon: "⚡" },
-  { num: "4", title: "Copiez et publiez", desc: "Utilisez le contenu directement sur WhatsApp, Facebook, Instagram ou votre boutique.", icon: "🚀" },
+  { num: "1", title: "Choisissez un outil", desc: "Sélectionnez parmi nos 5 outils IA selon votre besoin du moment.", icon: TargetIcon },
+  { num: "2", title: "Remplissez le formulaire", desc: "Décrivez votre produit, votre audience et votre objectif en quelques secondes.", icon: PenLineIcon },
+  { num: "3", title: "Obtenez votre contenu", desc: "L'IA génère un contenu professionnel et persuasif adapté au marché africain.", icon: ZapIcon },
+  { num: "4", title: "Copiez et publiez", desc: "Utilisez le contenu directement sur WhatsApp, Facebook, Instagram ou votre boutique.", icon: RocketIcon },
 ];
 
 const faqs = [
@@ -134,7 +153,7 @@ export default function LandingPage() {
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="rounded-2xl p-4 backdrop-blur-md" style={{ backgroundColor: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)" }}>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white text-lg">⚡</div>
+                      <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white"><ZapIcon size={20} /></div>
                       <div>
                         <div className="font-bold text-white text-sm">Fiche produit générée</div>
                         <div className="text-white/70 text-xs">en 2.3 secondes · Prête à publier</div>
@@ -145,7 +164,7 @@ export default function LandingPage() {
               </div>
               {/* Floating badge */}
               <div className="absolute -top-4 -right-4 rounded-2xl px-4 py-3 shadow-xl animate-fade-in" style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)" }}>
-                <div className="text-2xl text-center">🔥</div>
+                <div className="text-2xl text-center flex justify-center"><FlameIcon size={28} /></div>
                 <div className="font-bold text-xs text-center mt-1" style={{ color: "var(--text-primary)" }}>+340% ventes</div>
               </div>
             </div>
@@ -164,12 +183,12 @@ export default function LandingPage() {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
             {[
-              { icon: "⏰", title: "Perte de temps", desc: "Des heures passées à chercher les bons mots sans résultat." },
-              { icon: "😕", title: "Contenu amateur", desc: "Des posts et publicités qui ne convainquent pas vos clients." },
-              { icon: "📉", title: "Ventes stagnantes", desc: "Votre produit est bon, mais personne ne l'achète." },
+              { icon: ClockIcon, title: "Perte de temps", desc: "Des heures passées à chercher les bons mots sans résultat." },
+              { icon: AlertCircleIcon, title: "Contenu amateur", desc: "Des posts et publicités qui ne convainquent pas vos clients." },
+              { icon: TrendDownIcon, title: "Ventes stagnantes", desc: "Votre produit est bon, mais personne ne l'achète." },
             ].map((p) => (
               <div key={p.title} className="rounded-xl p-5" style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                <div className="text-2xl mb-3">{p.icon}</div>
+                <p.icon size={26} className="mb-3" style={{ color: "var(--accent)" }} />
                 <div className="font-display font-bold text-white mb-2">{p.title}</div>
                 <div className="text-white/50 text-sm">{p.desc}</div>
               </div>
@@ -254,8 +273,8 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {tools.map((tool, i) => (
               <div key={i} className="rounded-2xl p-6 card-hover group" style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)" }}>
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.color} flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform`}>
-                  {tool.icon}
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.color} flex items-center justify-center text-white mb-5 group-hover:scale-110 transition-transform`}>
+                  <tool.Icon size={22} />
                 </div>
                 <h3 className="font-display font-bold text-lg mb-2" style={{ color: "var(--text-primary)" }}>{tool.title}</h3>
                 <p className="text-sm mb-5 leading-relaxed" style={{ color: "var(--text-secondary)" }}>{tool.desc}</p>
@@ -270,7 +289,7 @@ export default function LandingPage() {
             {/* CTA card */}
             <div className="gradient-primary rounded-2xl p-6 flex flex-col justify-between">
               <div>
-                <div className="text-4xl mb-5">✨</div>
+                <div className="text-white mb-5 flex justify-center"><SparklesIcon size={40} /></div>
                 <h3 className="font-display font-bold text-white text-lg mb-2">Prêt à commencer ?</h3>
                 <p className="text-white/70 text-sm mb-5">5 générations gratuites, sans carte bancaire.</p>
               </div>
@@ -292,8 +311,8 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step) => (
               <div key={step.num} className="text-center">
-                <div className="w-14 h-14 rounded-2xl gradient-primary text-2xl flex items-center justify-center mx-auto mb-4">
-                  {step.icon}
+                <div className="w-14 h-14 rounded-2xl gradient-primary text-white flex items-center justify-center mx-auto mb-4">
+                  <step.icon size={26} />
                 </div>
                 <div className="font-display font-bold text-xs mb-1 uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>Étape {step.num}</div>
                 <h3 className="font-display font-bold mb-2" style={{ color: "var(--text-primary)" }}>{step.title}</h3>

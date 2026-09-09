@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
+import { MessageCircleIcon } from "../components/icons";
 
 const plans = [
   {
@@ -229,7 +230,7 @@ export default function PricingPage() {
           <h2 className="font-display font-bold text-2xl text-[#0F172A] mb-4">Des questions sur les tarifs ?</h2>
           <p className="text-[#64748B] mb-6">Les paiements seront disponibles très prochainement via Mobile Money et cartes bancaires.</p>
           <div className="inline-flex items-center gap-3 px-6 py-4 bg-[#EEF2FF] rounded-xl">
-            <span className="text-2xl">📲</span>
+            <span className="text-white flex justify-center"><MessageCircleIcon size={22} /></span>
             <div className="text-left">
               <div className="font-bold text-[#0F172A] text-sm">Contactez-nous sur WhatsApp</div>
               <div className="text-[#64748B] text-xs">+221 XX XXX XX XX</div>

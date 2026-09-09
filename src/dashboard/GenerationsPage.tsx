@@ -1,22 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useApp, ToolType } from "../context/AppContext";
-
-const toolLabels: Record<ToolType, string> = {
-  "fiche-produit": "Fiche produit",
-  publicite: "Publicité",
-  "publication-sociale": "Publication sociale",
-  "messages-whatsapp": "Messages WhatsApp",
-  "offre-commerciale": "Offre commerciale",
-};
-
-const toolIcons: Record<ToolType, string> = {
-  "fiche-produit": "📦",
-  publicite: "📢",
-  "publication-sociale": "📱",
-  "messages-whatsapp": "💬",
-  "offre-commerciale": "🎯",
-};
+import { TOOLS, toolById, toolLabel } from "../config/tools";
+import { ArrowRightIcon, CopyIcon, InboxIcon } from "../components/icons";
 
 export default function GenerationsPage() {
   const { user } = useAuth();
@@ -37,77 +23,93 @@ export default function GenerationsPage() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-5xl mx-auto" style={{ backgroundColor: "var(--bg)" }}>
       <div className="mb-8">
-        <h1 className="font-display font-bold text-2xl text-[#0F172A]">Mes générations</h1>
-        <p className="text-[#64748B] text-sm mt-1">{allGens.length} contenu{allGens.length > 1 ? "s" : ""} généré{allGens.length > 1 ? "s" : ""} au total</p>
+        <h1 className="font-display font-bold text-2xl" style={{ color: "var(--text-primary)" }}>Mes générations</h1>
+        <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>{allGens.length} contenu{allGens.length > 1 ? "s" : ""} généré{allGens.length > 1 ? "s" : ""} au total</p>
       </div>
 
       {/* Filtres */}
       <div className="flex flex-wrap gap-2 mb-6">
-        {(["tous", "fiche-produit", "publicite", "publication-sociale", "messages-whatsapp", "offre-commerciale"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              filter === f
-                ? "gradient-primary text-white shadow-sm"
-                : "bg-white border border-[#E2E8F0] text-[#64748B] hover:border-[#4F46E5] hover:text-[#4F46E5]"
-            }`}
-          >
-            {f === "tous" ? "Tous" : `${toolIcons[f]} ${toolLabels[f]}`}
-          </button>
-        ))}
+        {(["tous", ...TOOLS.map((t) => t.id)] as const).map((f) => {
+          const meta = f === "tous" ? null : toolById(f);
+          const active = filter === f;
+          return (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all inline-flex items-center gap-1.5 ${
+                active
+                  ? "gradient-primary text-white shadow-sm"
+                  : "text-[var(--text-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary-text)]"
+              }`}
+              style={active ? undefined : { backgroundColor: "var(--surface)", border: "1px solid var(--border)" }}
+            >
+              {meta && <meta.Icon size={13} style={{ color: active ? "currentColor" : "var(--text-muted)" }} />}
+              {f === "tous" ? "Tous" : meta?.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Liste */}
       {filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-12 text-center">
-          <div className="text-5xl mb-4">📭</div>
-          <div className="font-display font-bold text-[#0F172A] mb-2">Aucune génération pour l'instant</div>
-          <div className="text-[#64748B] text-sm">Utilisez un outil IA pour créer votre premier contenu</div>
+        <div className="rounded-2xl border p-12 text-center" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
+          <div className="mx-auto mb-4 w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center text-white">
+            <InboxIcon size={26} />
+          </div>
+          <div className="font-display font-bold mb-2" style={{ color: "var(--text-primary)" }}>Aucune génération pour l'instant</div>
+          <div className="text-sm" style={{ color: "var(--text-secondary)" }}>Utilisez un outil IA pour créer votre premier contenu</div>
         </div>
       ) : (
         <div className="space-y-4">
-          {filtered.map((gen) => (
-            <div key={gen.id} className="bg-white rounded-2xl border border-[#E2E8F0] overflow-hidden">
-              <div className="flex items-center gap-4 px-5 py-4">
-                <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-lg flex-shrink-0">
-                  {toolIcons[gen.tool]}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-display font-bold text-[#0F172A] text-sm">{toolLabels[gen.tool]}</div>
-                  <div className="text-xs text-[#94A3B8]">
-                    {new Date(gen.createdAt).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}
+          {filtered.map((gen) => {
+            const meta = toolById(gen.tool);
+            const Icon = meta?.Icon;
+            return (
+              <div key={gen.id} className="rounded-2xl overflow-hidden" style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)" }}>
+                <div className="flex items-center gap-4 px-5 py-4">
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${meta?.gradient ?? "from-slate-400 to-slate-500"} flex items-center justify-center text-white flex-shrink-0`}>
+                    {Icon && <Icon size={18} />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-display font-bold text-sm" style={{ color: "var(--text-primary)" }}>{toolLabel(gen.tool)}</div>
+                    <div className="text-xs" style={{ color: "var(--text-muted)" }}>
+                      {new Date(gen.createdAt).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleCopy(gen.id, gen.output)}
+                      className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${
+                        copied === gen.id
+                          ? "text-[#16A34A]"
+                          : "hover:text-white"
+                      }`}
+                      style={copied === gen.id ? { backgroundColor: "rgba(22,163,74,0.12)" } : { backgroundColor: "var(--primary-subtle)", color: "var(--primary-text)" }}
+                    >
+                      <CopyIcon size={12} />
+                      {copied === gen.id ? "Copié !" : "Copier"}
+                    </button>
+                    <button
+                      onClick={() => setExpanded(expanded === gen.id ? null : gen.id)}
+                      className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-lg transition-all"
+                      style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-secondary)" }}
+                    >
+                      {expanded === gen.id ? "Réduire" : "Voir"}
+                      <ArrowRightIcon size={12} className={expanded === gen.id ? "rotate-90 transition-transform" : "transition-transform"} />
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleCopy(gen.id, gen.output)}
-                    className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${
-                      copied === gen.id
-                        ? "bg-[#DCFCE7] text-[#16A34A]"
-                        : "bg-[#EEF2FF] text-[#4F46E5] hover:bg-[#4F46E5] hover:text-white"
-                    }`}
-                  >
-                    {copied === gen.id ? "Copié !" : "Copier"}
-                  </button>
-                  <button
-                    onClick={() => setExpanded(expanded === gen.id ? null : gen.id)}
-                    className="text-xs font-bold px-3 py-1.5 rounded-lg bg-[#F8F9FC] text-[#64748B] hover:bg-[#E2E8F0] transition-all"
-                  >
-                    {expanded === gen.id ? "Réduire" : "Voir"}
-                  </button>
-                </div>
-              </div>
 
-              {expanded === gen.id && (
-                <div className="border-t border-[#F1F5F9] px-5 py-4">
-                  <pre className="text-xs text-[#0F172A] whitespace-pre-wrap font-sans leading-relaxed">{gen.output}</pre>
-                </div>
-              )}
-            </div>
-          ))}
+                {expanded === gen.id && (
+                  <div className="px-5 py-4" style={{ borderTop: "1px solid var(--border-subtle)" }}>
+                    <pre className="text-xs whitespace-pre-wrap font-sans leading-relaxed" style={{ color: "var(--text-primary)" }}>{gen.output}</pre>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
